@@ -1,0 +1,41 @@
+Day 1
+-----
+Find
+3. MATCH FULL will not allow one column of a multicolumn foreign key to be null unless all foreign key columns are null. 
+
+Do
+1. select * from pg_class where relname in ('cities', 'countries', 'event's, 'venues');
+
+2. select country_name from countries c inner join venues v on c.country_code=v.country_code inner join events e on e.venue_id=v.venue_id where e.title='LARP Club'; 
+
+3. alter table venues add active boolean default true;
+
+Day 2
+-----
+Find
+1. http://www.postgresql.org/docs/9.1/static/functions-aggregate.html
+
+2. http://wiki.postgresql.org/wiki/Community_Guide_to_PostgreSQL_GUI_Tools
+
+Do
+1. create rule delete_venues as on delete to venues do instead update venues set active=false where venue_id=OLD.venue_id;
+
+2. Replace “'select * from month_count'’ with “select * from generate_series(1,12);”
+
+3. select * from crosstab('select div(extract(day from starts)::int, 7) + 1  as week, extract(dow from starts) as dow, count(*) from events where extract(month from starts) =2 group by week, dow order by week, dow;', 'select generate_series(0,6)') as (week int, sun int, mon int, tue int, wed int, thu int, fri int, sat int) order by week;
+
+
+Day 3
+-----
+Find
+1. http://www.postgresql.org/docs/current/static/contrib.html
+
+2. http://pubs.opengroup.org/onlinepubs/000095399/basedefs/xbd_chap09.html
+
+Do
+1. See find_movies_by_actors.sql & find_movies_by_title.sql
+
+2. create table comments (comment_id serial primary key, comment text); 
+   select a.name, count(*) from actors a join comments c on to_tsvector(c.comment) @@ plainto_tsquery('simple', regexp_replace(a.name, '.* ', '')) group by a.actor_id order by count desc limit 10;
+
+
