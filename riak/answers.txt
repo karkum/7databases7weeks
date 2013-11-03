@@ -1,0 +1,98 @@
+DEFAULT PORT is 100[1,2,3]8 for dev[1,2,3] not 8091
+
+Day 1
+-----
+Find
+1. http://docs.basho.com/riak/latest/dev/references/http/
+
+2. http://en.wikipedia.org/wiki/Internet_media_type
+
+Do
+1. curl -X PUT http://localhost:10018/riak/animals/polly?returnbody=true -H "Content-Type: application/json" -H "Link:</riak/photos/polly.jpg>; riaktag=\"photo\"" -d '{"nickname" : "Sweet Polly Purebred", "breed" : "Purebred"}'
+
+2. curl -i -X POST http://localhost:10018/riak/docs \
+> -H "Content-Type: application/pdf" \
+> --data-binary @sample.pdf
+HTTP/1.1 100 Continue
+
+HTTP/1.1 201 Created
+Vary: Accept-Encoding
+Server: MochiWeb/1.1 WebMachine/1.10.0 (never breaks eye contact)
+Location: /riak/docs/7mBFUvIzGIrsDzAzNJnfAVSoJt5
+Date: Sat, 02 Nov 2013 21:13:58 GMT
+Content-Type: application/pdf
+Content-Length: 0
+
+3. curl -i -X PUT http://localhost:10018/riak/medicines/antibiotics -H "Content-Type: application/jpeg" -H "Link: </riak/animals/ace>;riaktag=\"sick\"" --data-binary @sick.jpg
+
+Day 2
+-----
+Find 
+2. http://contrib.basho.com/
+
+3. http://docs.basho.com/riak/latest/dev/references/keyfilters/
+
+
+Do
+1.
+curl -X PUT -H "Content-type:application/json" http://localhost:10018/riak/my_functions/map_by_floor --data @-
+function(v) {
+    var parsed_data = JSON.parse(v.values[0].data);
+    var data={};
+    data[Math.floor(v.key/100)] = parsed_data.capacity;
+    return [data];
+}
+
+curl -X PUT -H "Content-type:application/json" http://localhost:10018/riak/my_functions/map_by_floor --data @-
+function(v) {
+    var totals={};
+    for(var i in v) {
+        for(var floor in v[i]) {
+            if (totals[floor]) totals[floor] += v[i][floor];
+            else totals[floor] = v[i][floor];
+        }
+    }
+    return [toals];
+}
+
+curl -X POST -H "content-type:application/json" \
+http://localhost:10018/mapred --data @-
+{
+    "inputs":"rooms",
+    "query":[
+    {"map":{
+        "language":"javascript",
+        "bucket":"my_functions",
+        "key":"map_by_floor"
+    }},
+    {"reduce":{
+        "language":"javascript",
+        "bucket":"my_functions",
+        "key":"reduce_by_floor"
+    }}
+    ]
+}
+Result: [{"48":445,"42":413,"79":476,"46":463,"52":459,"56":428,"81":471,"53":418,"61":455,"12":445,"67":441,"20":438,"72":453,"89":415,"74":437,"84":436,"16":411,"49":422,"65":469,"87":422,"8":415,"34":423,"58":489,"57":449,"15":476,"69":471,"33":430,"14":464,"77":462,"30":440,"70":457,"36":464,"75":434,"100":428,"73":407,"13":411,"23":429,"3":463,"64":489,"19":476,"71":471,"95":467,"27":452,"83":439,"78":406,"2":440,"91":447,"1":429,"90":430,"6":468,"94":408,"59":416,"62":443,"4":488,"39":475,"11":451,"17":394,"51":413,"35":428,"47":466,"7":460,"92":443,"97":450,"26":412,"22":448,"76":445,"29":454,"86":480,"50":454,"99":408,"40":437,"28":454,"82":448,"10":468,"44":451,"63":429,"88":424,"68":412,"85":454,"93":474,"25":449,"37":430,"5":439,"9":455,"21":433,"98":487,"24":461,"54":463,"31":503,"60":435,"45":406,"32":450,"55":440,"96":447,"41":426,"80":462,"43":410,"18":442,"66":464,"38":430}]
+
+2. curl -X POST -H "content-type:application/json" \
+> http://localhost:10018/mapred --data @-
+{
+    "inputs":{
+        "bucket":"rooms",
+        "key_filters":[["string_to_int"], ["between", 4201, 4399]]
+    },
+    "query":[
+    {"map":{
+        "language":"javascript",
+        "bucket":"my_functions",
+        "key":"map_by_floor"
+    }},
+    {"reduce":{
+        "language":"javascript",
+        "bucket":"my_functions",
+        "key":"reduce_by_floor"
+    }}
+    ]
+}
+
+Result: [{"42":413,"43":410}]
