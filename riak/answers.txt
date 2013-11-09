@@ -96,3 +96,15 @@ Result: [{"48":445,"42":413,"79":476,"46":463,"52":459,"56":428,"81":471,"53":41
 }
 
 Result: [{"42":413,"43":410}]
+
+Day 3
+-----
+Find
+1. https://github.com/basho/riak_function_contrib
+
+Do
+1. curl -X PUT http://localhost:10018/buckets/animals/keys/one -H "x-riak-index_score_int: 1" -d '{"name":"one", "score":1}'
+   curl -X PUT http://localhost:10018/buckets/animals/keys/two -H "x-riak-index_score_int: 2" -d '{"name":"two", "score":2}'
+   curl -X PUT http://localhost:10018/buckets/animals/keys/three -H "x-riak-index_score_int: 3" -d '{"name":"three", "score":3}'
+
+curl http://localhost:10018/buckets/animals/index/score_int/1/3
