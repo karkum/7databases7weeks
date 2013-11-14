@@ -1,0 +1,9 @@
+Day 1
+-----
+Find 
+1. From the shell, we can use these commands: 
+    -delete 'table', 'row', 'column', 'timestamp'
+    -deleteall 'table', row', 'column', 'timestamp'
+
+Do
+1. 
