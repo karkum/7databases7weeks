@@ -5,5 +5,37 @@ Find
     -delete 'table', 'row', 'column', 'timestamp'
     -deleteall 'table', row', 'column', 'timestamp'
 
+
 Do
 1. 
+import 'org.apache.hadoop.hbase.client.HTable'
+import 'org.apache.hadoop.hbase.client.Put'
+def put_many( table_name, row, column_values )
+  table = HTable.new(@hbase.configuration, table_name)
+  p = Put.new(row.to_s.to_java_bytes)
+  column_values.each do |k,v|
+    colfamily = k.split(':')
+    p.add(colfamily.first.to_s.to_java_bytes, colfamily.last.to_s.to_java_bytes, v.to_s.to_java_bytes)
+  end
+  table.put(p)
+end
+
+2. Just run ^.
+
+Day 2
+-----
+Find
+1. http://hbase.apache.org/book/compression.html
+
+2. http://www.quora.com/How-are-bloom-filters-used-in-HBase
+
+3. Block compression, Record compression
+
+Do
+1. create 'foods', 'facts'
+
+2. See "import_foods.rb"
+
+Day 3
+-----
+Ain't nobody got time for this
