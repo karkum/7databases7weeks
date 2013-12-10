@@ -1,0 +1,39 @@
+Day 1
+-----
+Find
+1. http://wiki.apache.org/couchdb/HTTP_Document_API 
+
+2. HEAD,COPY,MOVE (deprecated)
+
+Do
+1. 
+curl -i -X PUT \
+"http://localhost:5984/music/my_id" \
+-H "Content-Type: application/json" \
+-d '{
+    "name": "Wings",
+    "albums": ["Wild Life", "Band on the Run", "London Town"]
+}'
+
+Result:
+HTTP/1.1 201 Created
+Server: CouchDB/1.5.0 (Erlang OTP/R16B02)
+Location: http://localhost:5984/music/my_id
+ETag: "1-a731a68484dba7b65b38f80084d9bab4"
+Date: Tue, 10 Dec 2013 02:45:22 GMT
+Content-Type: text/plain; charset=utf-8
+Content-Length: 68
+Cache-Control: must-revalidate
+
+{"ok":true,"id":"my_id","rev":"1-a731a68484dba7b65b38f80084d9bab4"}
+
+2. 
+curl -X PUT http://127.0.0.1:5984/my_db
+Result: {"ok":true}
+curl -X DELETE http://127.0.0.1:5984/my_db
+result: {"ok":true}
+
+3. 
+#First insert a dummy document
+curl -X POST http://localhost:5984/my_db -H "Content-Type: application/json" -d {} 
+curl -X PUT http://127.0.0.1:5984/my_db/a2cba3a1fe79bca9b3a7e3dd98000a24/attchment?rev=2-eeaafc89d3e18a077bd64eabcfe937fc --data-binary @answers.txt -H "Context-Type: text/plain"
